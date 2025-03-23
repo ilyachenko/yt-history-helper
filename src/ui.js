@@ -167,6 +167,25 @@ export function createAnalyzerUI() {
   };
   buttonContainer.appendChild(expandButton);
 
+  // Scan history button
+  const scanButton = document.createElement("button");
+  scanButton.textContent = "↓";
+  scanButton.style.padding = "4px 8px";
+  scanButton.style.cursor = "pointer";
+  scanButton.style.backgroundColor = "#f0f0f0";
+  scanButton.style.border = "1px solid #d3d3d3";
+  scanButton.style.borderRadius = "3px";
+  scanButton.style.fontWeight = "bold";
+  scanButton.style.fontSize = "14px";
+  scanButton.title = "Scan History";
+  scanButton.onclick = function () {
+    window.scrollTo({
+      top: 999999,
+      behavior: 'smooth'
+    });
+  };
+  buttonContainer.appendChild(scanButton);
+
   // Add close button
   const closeButton = document.createElement("button");
   closeButton.textContent = "✕";
