@@ -1,5 +1,5 @@
 // Create a responsive row layout for channels instead of a column list
-function createChannelRowLayout(channels, parentElement) {
+function createChannelRowLayout(channels, parentElement, videos) {
   // Create a flex container for the channels
   const channelsContainer = document.createElement("div");
   channelsContainer.style.display = "flex";
@@ -9,10 +9,36 @@ function createChannelRowLayout(channels, parentElement) {
   channelsContainer.style.marginBottom = "15px";
   channelsContainer.style.display = "none"; // Hidden by default
 
+  // Count videos per channel
+  const channelCounts = {};
+  videos.forEach(video => {
+    if (video.channel) {
+      channelCounts[video.channel] = (channelCounts[video.channel] || 0) + 1;
+    }
+  });
+
   // Add each channel as a chip/badge
   channels.forEach((channel) => {
     const channelChip = document.createElement("div");
-    channelChip.textContent = channel;
+    const channelCount = channelCounts[channel] || 0;
+
+    // Create container for channel name and count
+    const channelContent = document.createElement("span");
+    channelContent.textContent = channel;
+    channelChip.appendChild(channelContent);
+
+    // Add count badge
+    const countBadge = document.createElement("span");
+    countBadge.textContent = channelCount;
+    countBadge.style.marginLeft = "6px";
+    countBadge.style.backgroundColor = "#d0d0d0";
+    countBadge.style.borderRadius = "12px";
+    countBadge.style.padding = "1px 6px";
+    countBadge.style.fontSize = "11px";
+    countBadge.style.fontWeight = "bold";
+    channelChip.appendChild(countBadge);
+
+    // Style the channel chip
     channelChip.style.backgroundColor = "#f0f0f0";
     channelChip.style.border = "1px solid #ddd";
     channelChip.style.borderRadius = "16px";
@@ -20,6 +46,8 @@ function createChannelRowLayout(channels, parentElement) {
     channelChip.style.fontSize = "13px";
     channelChip.style.cursor = "pointer";
     channelChip.style.transition = "background-color 0.2s";
+    channelChip.style.display = "flex";
+    channelChip.style.alignItems = "center";
 
     // Add hover effect
     channelChip.addEventListener("mouseover", () => {
@@ -137,7 +165,7 @@ export function displayResults(videos, analysis) {
   resultsArea.appendChild(channelsRow);
 
   // Create the channels row layout instead of a list
-  const channelsContainer = createChannelRowLayout(analysis.uniqueChannels, resultsArea);
+  const channelsContainer = createChannelRowLayout(analysis.uniqueChannels, resultsArea, videos);
 
   // Toggle visibility of the channels container when clicking on the row
   channelsRow.addEventListener("click", () => {
