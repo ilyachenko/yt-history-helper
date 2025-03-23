@@ -57,6 +57,10 @@ import { displayResults, updateResults } from "./results-display";
             // Analyze the extracted data
             const analysis = analyzeVideos(videos);
 
+            // Extract unique channels
+            const uniqueChannels = [...new Set(videos.map((v) => v.channel))];
+            analysis.uniqueChannels = uniqueChannels;
+
             // Display the results
             displayResults(videos, analysis);
         } catch (err) {

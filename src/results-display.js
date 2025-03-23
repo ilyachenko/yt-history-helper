@@ -56,6 +56,62 @@ export function displayResults(videos, analysis) {
   partialP.style.marginBottom = "15px";
   resultsArea.appendChild(partialP);
 
+  // Create row for unique channels title and toggle
+  const channelsRow = document.createElement("div");
+  channelsRow.style.display = "flex";
+  channelsRow.style.alignItems = "center";
+  channelsRow.style.marginBottom = "5px";
+  channelsRow.style.cursor = "pointer";
+
+  // Add unique channels title
+  const channelsStrong = document.createElement("strong");
+  channelsStrong.textContent = "Unique Channels:";
+  channelsRow.appendChild(channelsStrong);
+  channelsRow.appendChild(document.createTextNode(` ${analysis.uniqueChannels.length}`));
+
+  // Add spacer
+  const spacer = document.createElement("span");
+  spacer.style.flex = "1";
+  channelsRow.appendChild(spacer);
+
+  // Add plus-minus toggle
+  const toggleSpan = document.createElement("span");
+  toggleSpan.textContent = "+";
+  toggleSpan.style.display = "inline-block";
+  toggleSpan.style.width = "20px";
+  toggleSpan.style.height = "20px";
+  toggleSpan.style.lineHeight = "18px";
+  toggleSpan.style.textAlign = "center";
+  toggleSpan.style.fontWeight = "bold";
+  toggleSpan.style.border = "1px solid #ccc";
+  toggleSpan.style.borderRadius = "50%";
+  toggleSpan.style.backgroundColor = "#f0f0f0";
+  toggleSpan.style.marginLeft = "10px";
+  toggleSpan.style.userSelect = "none";
+  channelsRow.appendChild(toggleSpan);
+
+  resultsArea.appendChild(channelsRow);
+
+  // Add list of unique channels (initially hidden)
+  const channelsList = document.createElement("ul");
+  channelsList.style.marginTop = "5px";
+  channelsList.style.paddingLeft = "20px";
+  channelsList.style.display = "none"; // Hidden by default
+  analysis.uniqueChannels.forEach((channel) => {
+    const channelItem = document.createElement("li");
+    channelItem.textContent = channel;
+    channelsList.appendChild(channelItem);
+  });
+  resultsArea.appendChild(channelsList);
+
+  // Toggle visibility of the channels list when clicking on the row
+  channelsRow.addEventListener("click", () => {
+    const isHidden = channelsList.style.display === "none";
+    channelsList.style.display = isHidden ? "block" : "none";
+    toggleSpan.textContent = isHidden ? "−" : "+"; // Using minus and plus signs
+    toggleSpan.style.fontWeight = isHidden ? "bold" : "bold";
+  });
+
   // Create container for video thumbnails
   const videoGrid = document.createElement("div");
   videoGrid.style.display = "grid";
