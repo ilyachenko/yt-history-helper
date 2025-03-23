@@ -177,13 +177,48 @@ export function createAnalyzerUI() {
   scanButton.style.borderRadius = "3px";
   scanButton.style.fontWeight = "bold";
   scanButton.style.fontSize = "14px";
-  scanButton.title = "Scan History";
+  scanButton.title = "Toggle Auto-Scroll";
+  scanButton.dataset.scrollActive = "false";
+
+  // Auto-scroll interval ID to track and clear when needed
+  let autoScrollInterval = null;
+
   scanButton.onclick = function () {
-    window.scrollTo({
-      top: 999999,
-      behavior: 'smooth'
-    });
+    const isActive = scanButton.dataset.scrollActive === "true";
+
+    if (!isActive) {
+      // Activate auto-scroll
+      scanButton.dataset.scrollActive = "true";
+      scanButton.textContent = "⏸";
+      scanButton.title = "Stop Auto-Scroll";
+
+      // Initial scroll
+      window.scrollTo({
+        top: 999999,
+        behavior: 'smooth'
+      });
+
+      // Set up interval to scroll every 3 seconds
+      autoScrollInterval = setInterval(() => {
+        window.scrollTo({
+          top: 999999,
+          behavior: 'smooth'
+        });
+      }, 3000);
+    } else {
+      // Deactivate auto-scroll
+      scanButton.dataset.scrollActive = "false";
+      scanButton.textContent = "↓";
+      scanButton.title = "Toggle Auto-Scroll";
+
+      // Clear the interval
+      if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }
   };
+
   buttonContainer.appendChild(scanButton);
 
   // Add close button
