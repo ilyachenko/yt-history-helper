@@ -192,6 +192,7 @@ export function createAnalyzerUI() {
       scanButton.textContent = "⏸";
       scanButton.title = "Stop Auto-Scroll";
 
+      window.extractAndAnalyzeData();
       // Initial scroll
       window.scrollTo({
         top: 999999,
@@ -200,6 +201,7 @@ export function createAnalyzerUI() {
 
       // Set up interval to scroll every 3 seconds
       autoScrollInterval = setInterval(() => {
+        window.extractAndAnalyzeData();
         window.scrollTo({
           top: 999999,
           behavior: 'smooth'
