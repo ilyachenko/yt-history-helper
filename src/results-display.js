@@ -1,4 +1,48 @@
-// Display the analysis results using safe DOM manipulation
+// Create a responsive row layout for channels instead of a column list
+function createChannelRowLayout(channels, parentElement) {
+  // Create a flex container for the channels
+  const channelsContainer = document.createElement("div");
+  channelsContainer.style.display = "flex";
+  channelsContainer.style.flexWrap = "wrap";
+  channelsContainer.style.gap = "8px";
+  channelsContainer.style.marginTop = "10px";
+  channelsContainer.style.marginBottom = "15px";
+  channelsContainer.style.display = "none"; // Hidden by default
+
+  // Add each channel as a chip/badge
+  channels.forEach((channel) => {
+    const channelChip = document.createElement("div");
+    channelChip.textContent = channel;
+    channelChip.style.backgroundColor = "#f0f0f0";
+    channelChip.style.border = "1px solid #ddd";
+    channelChip.style.borderRadius = "16px";
+    channelChip.style.padding = "4px 12px";
+    channelChip.style.fontSize = "13px";
+    channelChip.style.cursor = "pointer";
+    channelChip.style.transition = "background-color 0.2s";
+
+    // Add hover effect
+    channelChip.addEventListener("mouseover", () => {
+      channelChip.style.backgroundColor = "#e0e0e0";
+    });
+
+    channelChip.addEventListener("mouseout", () => {
+      channelChip.style.backgroundColor = "#f0f0f0";
+    });
+
+    // Add click event to filter by this channel
+    channelChip.addEventListener("click", () => {
+      window.filterByChannel(channel);
+    });
+
+    channelsContainer.appendChild(channelChip);
+  });
+
+  parentElement.appendChild(channelsContainer);
+  return channelsContainer;
+}
+
+// Update the displayResults function to use the new channel row layout
 export function displayResults(videos, analysis) {
   // Store the videos for later export
   window.analyzedVideos = videos;
@@ -92,24 +136,14 @@ export function displayResults(videos, analysis) {
 
   resultsArea.appendChild(channelsRow);
 
-  // Add list of unique channels (initially hidden)
-  const channelsList = document.createElement("ul");
-  channelsList.style.marginTop = "5px";
-  channelsList.style.paddingLeft = "20px";
-  channelsList.style.display = "none"; // Hidden by default
-  analysis.uniqueChannels.forEach((channel) => {
-    const channelItem = document.createElement("li");
-    channelItem.textContent = channel;
-    channelsList.appendChild(channelItem);
-  });
-  resultsArea.appendChild(channelsList);
+  // Create the channels row layout instead of a list
+  const channelsContainer = createChannelRowLayout(analysis.uniqueChannels, resultsArea);
 
-  // Toggle visibility of the channels list when clicking on the row
+  // Toggle visibility of the channels container when clicking on the row
   channelsRow.addEventListener("click", () => {
-    const isHidden = channelsList.style.display === "none";
-    channelsList.style.display = isHidden ? "block" : "none";
+    const isHidden = channelsContainer.style.display === "none";
+    channelsContainer.style.display = isHidden ? "flex" : "none";
     toggleSpan.textContent = isHidden ? "−" : "+"; // Using minus and plus signs
-    toggleSpan.style.fontWeight = isHidden ? "bold" : "bold";
   });
 
   // Create container for video thumbnails
