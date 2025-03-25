@@ -263,7 +263,37 @@ export function createAnalyzerUI() {
   filterInput.style.borderRadius = "3px";
   filterInput.style.fontSize = "13px";
   filterInput.addEventListener("input", window.applyFilter);
+
+  // Add event listener for Enter key
+  filterInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      const filterValue = filterInput.value.trim();
+      if (filterValue) {
+        addFilterTag(filterValue);
+        // Do not clear the text input
+      }
+    }
+  });
+
   filterContainer.appendChild(filterInput);
+
+  // Add "Add" button
+  const addFilterButton = document.createElement("button");
+  addFilterButton.textContent = "Add";
+  addFilterButton.style.padding = "8px 12px";
+  addFilterButton.style.cursor = "pointer";
+  addFilterButton.style.backgroundColor = "#f0f0f0";
+  addFilterButton.style.border = "1px solid #d3d3d3";
+  addFilterButton.style.borderRadius = "3px";
+  addFilterButton.style.fontSize = "13px";
+  addFilterButton.onclick = () => {
+    const filterValue = filterInput.value.trim();
+    if (filterValue) {
+      addFilterTag(filterValue);
+      // Do not clear the text input
+    }
+  };
+  filterContainer.appendChild(addFilterButton);
 
   // Add clear filter button
   const clearFilterButton = document.createElement("button");
@@ -279,6 +309,58 @@ export function createAnalyzerUI() {
     window.applyFilter();
   };
   filterContainer.appendChild(clearFilterButton);
+
+  // Add filter tags container
+  const filterTagsContainer = document.createElement("div");
+  filterTagsContainer.id = "filter-tags-container";
+  filterTagsContainer.style.marginTop = "10px";
+  filterTagsContainer.style.display = "flex";
+  filterTagsContainer.style.flexWrap = "wrap";
+  filterTagsContainer.style.gap = "5px";
+  headerContainer.appendChild(filterTagsContainer);
+
+  // Function to save filter tags to local storage
+  function saveFilterTagsToLocalStorage() {
+    const tags = Array.from(filterTagsContainer.children).map(tag => tag.textContent.replace(" ✕", ""));
+    localStorage.setItem("filterTags", JSON.stringify(tags));
+  }
+
+  // Function to load filter tags from local storage
+  function loadFilterTagsFromLocalStorage() {
+    const savedTags = JSON.parse(localStorage.getItem("filterTags") || "[]");
+    savedTags.forEach(tag => addFilterTag(tag));
+  }
+
+  // Function to add a filter tag
+  function addFilterTag(filterValue) {
+    const tag = document.createElement("span");
+    tag.textContent = filterValue;
+    tag.style.padding = "5px 10px";
+    tag.style.backgroundColor = "#e0e0e0";
+    tag.style.borderRadius = "3px";
+    tag.style.cursor = "pointer";
+    tag.style.fontSize = "12px";
+    tag.onclick = () => {
+      filterInput.value = filterValue;
+      window.applyFilter();
+    };
+
+    // Add a remove button to the tag
+    const removeButton = document.createElement("span");
+    removeButton.textContent = " ✕";
+    removeButton.style.marginLeft = "5px";
+    removeButton.style.cursor = "pointer";
+    removeButton.style.color = "#ff0000";
+    removeButton.onclick = (e) => {
+      e.stopPropagation(); // Prevent triggering the tag click
+      filterTagsContainer.removeChild(tag);
+      saveFilterTagsToLocalStorage(); // Save updated tags
+    };
+    tag.appendChild(removeButton);
+
+    filterTagsContainer.appendChild(tag);
+    saveFilterTagsToLocalStorage(); // Save updated tags
+  }
 
   // Add toggle container for hide watched videos
   const toggleContainer = document.createElement("div");
@@ -369,6 +451,9 @@ export function createAnalyzerUI() {
 
   // Update title on window resize
   window.addEventListener("resize", updateTitleDisplay);
+
+  // Load filter tags from local storage on initialization
+  loadFilterTagsFromLocalStorage();
 
   // Return the update function for external use if needed
   return {
